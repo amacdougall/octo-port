@@ -44,16 +44,14 @@ app.config.from_object(__name__)
 # ROUTES
 @app.route("/")
 def root():
-    params = {"client_id": GITHUB_CLIENT_ID}
-    auth_url = "https://github.com/login/oauth/authorize?{params}"
-    return redirect(auth_url.format(params=url_encode(params)))
+    if not session.has_key("token") and not request.args.get("code"):
+        params = {"client_id": GITHUB_CLIENT_ID}
+        auth_url = "https://github.com/login/oauth/authorize?{params}"
+        return redirect(auth_url.format(params=url_encode(params)))
+    
+    if request.args.get("code"):
+        session["token"] = request.args.get("code")
 
-@app.route("/home")
-def home():
-    if not session.has_key("token") or not request.args.get("code"):
-        return redirect(url_for("root"))
-
-    session["token"] = request.args.get("code")
     return render_template("home.jinja2")
 
 @app.route("/gimme-csv", methods=['POST', 'GET'])
