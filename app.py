@@ -42,8 +42,8 @@ app.config.from_object(__name__)
 
 
 # ROUTES
-@app.route("/")
-def root():
+@app.route("/<params>")
+def root(params):
     if not session.has_key("token") and not request.args.get("code"):
         params = {"client_id": GITHUB_CLIENT_ID}
         auth_url = "https://github.com/login/oauth/authorize?{params}"
