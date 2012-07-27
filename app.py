@@ -150,6 +150,7 @@ def issue_to_row(issue):
 
 
 def api_request(path, params=None):
+    raise
     params = params or {}
     params["access_token"] = session["token"]
 
