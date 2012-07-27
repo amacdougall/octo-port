@@ -1,5 +1,47 @@
 /* App styles */
+body {
+  font-family: Georgia;
+  padding: 0;
+  margin: 0;
+}
 .page-wrap {
   width: 80%;
   margin: 0 auto;
+}
+.header {
+  text-align: center;
+}
+.main h1 {
+  font-size: 140%;
+}
+.main h2 {
+  font-size: 120%;
+}
+#gogogo {
+  text-align: center;
+}
+input {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  font-size: 100%;
+  display: block;
+  margin: 0 auto 10px;
+  width: 50%;
+}
+.field {
+  padding: 10px 5px;
+  border: 1px solid #ccc;
+}
+.go-btn {
+  padding: 10px 5px;
+  background: #ccc;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  background: #000;
+  color: #fff;
+  padding: 0 10px;
 }
