@@ -6,6 +6,7 @@ import StringIO
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, send_file
 from werkzeug.urls import url_decode, url_encode
+import requests
 import urlparse
 import yaml
 
