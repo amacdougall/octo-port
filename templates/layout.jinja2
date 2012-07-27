@@ -5,6 +5,22 @@
     <link rel="stylesheet" href="static/styles/base.css">
   </head>
   <body>
-    {% block content %}{% endblock %}
+    <div class="page-wrap">
+      <div class="header">
+        <h1>Octo-Port</h1>
+        <h2>Send your GitHub issue queries to CSV</h2>
+      </div>
+      <div role="main">
+        {% block content %}{% endblock %}
+      </div>
+      <div class="footer">
+        <h3>So why is this useful?</h3>
+        <p>
+          Many of the project managers and maintainers of the world wish there were more
+          robust ways to work with GitHub Issues, especially for large projects. Exporting
+          to CSV with all your filters helps you manage the data how you want.
+        </p>
+      </div>
+    </div>
   </body>
 </html>

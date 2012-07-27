@@ -1,4 +1,17 @@
 {% extends "layout.jinja2" %}
 {% block content %}
-	<h1>Home Page Content</h1>
+  <h1>How to use this page</h1>
+  <p>
+    Head to the GitHub repository you're working on and add filters, etc. how you like. 
+    When you're done, copy the url you have to your clipboard and bring it here.
+  </p>
+  <p>Example: <a href="https://github.com/documentcloud/underscore/issues">On the Underscore repository</a>,
+  we add a few filters; using the tag 'change' and 'enhancement' for closed issues. The link looks like this:
+  https://github.com/documentcloud/underscore/issues?labels=change%2Cenhancement&page=1&state=closed. Then,
+  come and bring it to octo-port, and get a fancy CSV of the data.</p>
+  <h2 id="gogogo">Let me at it!</h2>
+	<form>
+    <input type="text" placeholder="Paste your GitHub url here ...">
+    <input type="submit" value="Give me a CSV!">
+  </form>
 {% endblock %}
