@@ -45,8 +45,8 @@ def root():
 def home():
     return render_template("home.jinja2")
 
-@app.route("/get_a_file")
-def get_a_file():
+@app.route("/gimme-csv", methods=['POST', 'GET'])
+def build():
     # just get the issues CSV, why not
     input_file = open("issues.csv")
     csv = input_file.read()
@@ -58,7 +58,6 @@ def get_a_file():
     return send_file(output_file,
                      attachment_filename="issues.csv",
                      as_attachment=True)
-
 
 # UTILITY
 def build_csv(issues, filename):

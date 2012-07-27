@@ -12,8 +12,8 @@
   </a>. Then,
   come and bring it to octo-port, and get a fancy CSV of the data.</p>
   <h2 id="gogogo">Let me at it!</h2>
-	<form>
-    <input class="field" type="text" placeholder="Paste your GitHub url here ...">
+	<form action="/gimme-csv" method="post">
+    <input class="field" type="text" name="github-string" placeholder="Paste your GitHub url here ...">
     <input class="go-btn" type="submit" value="Give me a CSV!">
   </form>
 {% endblock %}
