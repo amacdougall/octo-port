@@ -2,9 +2,27 @@
 <html>
   <head>
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="static/styles/base.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
   </head>
   <body>
-    {% block content %}{% endblock %}
+    <div class="page-outer">
+      <div class="page-wrap">
+        <div class="header">
+          <h1>Octo-Port</h1>
+          <h2>Making GitHub Issues spreadsheet-friendly</h2>
+        </div>
+        <div class="main" role="main">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <h3>So why is this useful?</h3>
+      <p>
+        Many of the project managers and maintainers of the world wish there were more
+        robust ways to work with GitHub Issues, especially for large projects. Exporting
+        to CSV with all your filters helps you manage the data how you want.
+      </p>
+    </div>
   </body>
 </html>
