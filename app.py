@@ -10,7 +10,7 @@ import urlparse
 import yaml
 
 # CONSTANTS
-# DEBUG = True
+DEBUG = True
 GITHUB_CLIENT_ID = os.environ["GITHUB_CLIENT_ID"]
 # Field names used in CSV output rows
 FIELDNAMES = [
@@ -30,6 +30,8 @@ FIELDNAMES = [
     "body",          # body
 ]
 
+SECRET_KEY = "something super secret"
+
 # Github API root URL
 API_ROOT = "https://api.github.com"
 
@@ -42,8 +44,8 @@ app.config.from_object(__name__)
 
 
 # ROUTES
-@app.route("/<params>")
-def root(params):
+@app.route("/")
+def root():
     if not session.has_key("token") and not request.args.get("code"):
         params = {"client_id": GITHUB_CLIENT_ID}
         auth_url = "https://github.com/login/oauth/authorize?{params}"
