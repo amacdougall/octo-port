@@ -8,12 +8,9 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from werkzeug.urls import url_decode, url_encode
 import yaml
 
-# load constants from external file for ultra-secret security
-constants = yaml.load(open("settings.yaml"))
-
 # CONSTANTS
 # DEBUG = True
-GITHUB_CLIENT_ID = constants['GITHUB_CLIENT_ID']
+GITHUB_CLIENT_ID = os.environ["GITHUB_CLIENT_ID"]
 
 # APP CONFIG
 app = Flask(__name__)
@@ -24,13 +21,13 @@ app.config.from_object(__name__)
 @app.route("/")
 def home():
     params = {
-            'client_id': GITHUB_CLIENT_ID,
-        }
+        'client_id': GITHUB_CLIENT_ID,
+    }
     return redirect('https://github.com/login/oauth/authorize?' +
                     url_encode(params))
 
 @app.route("/auth/<service>/callback", methods=["GET", "POST"])
-def  callback(service):
+def callback(service):
     return render_template("home.jinja2")
 
 # UTILITY
