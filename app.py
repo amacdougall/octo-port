@@ -50,6 +50,9 @@ def root():
 
 @app.route("/home")
 def home():
+    if not session.has_key("token") or request.args.get("code"):
+        return redirect(url_for("root"))
+
     session["token"] = request.args.get("code")
     return render_template("home.jinja2")
 
