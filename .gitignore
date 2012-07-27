@@ -1,5 +1,4 @@
 .DS_store
 venv
 *.pyc
-
-app/settings.yaml
+settings.yaml
