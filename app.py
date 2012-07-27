@@ -6,6 +6,7 @@ import StringIO
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, send_file
 from werkzeug.urls import url_decode, url_encode
+import urlparse
 import yaml
 
 # CONSTANTS
@@ -29,6 +30,12 @@ FIELDNAMES = [
     "body",          # body
 ]
 
+# Github API root URL
+API_ROOT = "https://api.github.com"
+
+# Number of results to show per API request; 100 is max
+RESULTS_PER_PAGE = 100
+
 # APP CONFIG
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -43,33 +50,65 @@ def root():
 
 @app.route("/home")
 def home():
+    session["token"] = request.args.get("code")
     return render_template("home.jinja2")
 
 @app.route("/gimme-csv", methods=['POST', 'GET'])
 def build():
-    # just get the issues CSV, why not
-    input_file = open("issues.csv")
-    csv = input_file.read()
-    input_file.close()
+    github_string = request.form["github-string"]
+    parse_result = urlparse.urlparse(github_string)
 
-    output_file = StringIO.StringIO()
-    output_file.write(csv)
-    output_file.seek(0)
-    return send_file(output_file,
+    q = urlparse.parse_qs(parse_result.query)
+    path = parse_result.path.split('/')[1:]
+    username = path[0]
+    repository = path[1]
+    params = {}
+
+    # path will always be issues/created, issues/mentioned, etc; no combinations
+    if 'created_by' in path:
+        params['created'] = path[-1]
+    if 'mentioned' in path:
+        params['mentioned'] = path[-1]
+    if 'subscribed' in path:
+        params['subscribed'] = path[-1]
+    if 'assigned' in path:
+        params['assigned'] = path[-1]
+    if 'state' in q:
+        params['state'] = ','.join(q['state'])
+    if 'labels' in q:
+        params['labels'] = ','.join(q['labels'])
+    if 'milestone' in q:
+        params['milestones'] = ','.join(q['milestone'])
+    if 'sort' in q:
+        params['sort'] = ','.join(q['sort'])
+    if 'direction' in q:
+        params['direction'] = ','.join(q['direction'])
+    if 'since' in q:
+        params['since'] = ','.join(q['since'])
+
+    issue_path = "/repos/{username}/{repository}/issues"
+    response = api_request(issue_path.format(username=username, repository=repository),
+                           params)
+    issues = json.loads(response.text)
+
+    return send_file(build_csv(issues),
                      attachment_filename="issues.csv",
                      as_attachment=True)
 
 # UTILITY
-def build_csv(issues, filename):
+def build_csv(issues):
     """
     Converts the supplied issues to CSV, saving them under the supplied
     filename. Accepts a list of issue dicts as given by the Github API.
+    Returns the file handle of the output StringIO.
     """
 
-    output_file = open(filename, "w")
+    output_file = StringIO.StringIO()
+    csv_writer = csv.DictWriter(output_file, FIELDNAMES)
     for issue in issues:
         csv_writer.writerow(issue_to_row(issue))
-    output_file.close()
+    output_file.seek(0)
+    return output_file
 
 def issue_to_row(issue):
     """
@@ -102,6 +141,18 @@ def issue_to_row(issue):
             row[key] = value.encode("utf-8")
 
     return row
+
+
+def api_request(path, params=None):
+    params = params or {}
+    params["access_token"] = session["token"]
+
+    if not params.has_key("per_page"):
+        params["per_page"] = RESULTS_PER_PAGE
+
+    return requests.get(urlparse.urljoin(API_ROOT, path),
+                        # TODO: send session["token"] in URL
+                        params=params)
 
 # USE AWFUL BUT STANDARD-ISSUE PYTHON HACK TO RUN THE SCRIPT
 if __name__ == "__main__":
