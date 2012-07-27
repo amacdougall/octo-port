@@ -150,7 +150,7 @@ def issue_to_row(issue):
 
 
 def api_request(path, params=None):
-    raise
+    raise Exception("Debug breakpoint, actually")
     params = params or {}
     params["access_token"] = session["token"]
 
