@@ -28,6 +28,10 @@ def root():
 def home():
     return render_template("home.jinja2")
 
+@app.route("/something")
+def something():
+    return render_template("something.jinja2")
+
 # UTILITY
 
 
