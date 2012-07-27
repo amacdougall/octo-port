@@ -50,7 +50,7 @@ def root():
 
 @app.route("/home")
 def home():
-    if not session.has_key("token") or request.args.get("code"):
+    if not session.has_key("token") or not request.args.get("code"):
         return redirect(url_for("root"))
 
     session["token"] = request.args.get("code")
