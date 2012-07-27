@@ -3,6 +3,8 @@ body {
   font-family: Georgia;
   padding: 0;
   margin: 0;
+  word-wrap: break-word;
+  background: #000;
 }
 a {
   color: #333;
@@ -10,6 +12,11 @@ a {
 }
 a:hover {
   text-decoration: underline;
+}
+.page-outer {
+  background: #fff;
+  width: 100%;
+  padding: 20px 0;
 }
 .page-wrap {
   width: 80%;
@@ -46,9 +53,6 @@ input {
 }
 
 .footer {
-  position: absolute;
-  bottom: 0;
-  background: #000;
   color: #fff;
-  padding: 0 10px;
+  padding: 5px 10px;
 }

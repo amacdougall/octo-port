@@ -5,13 +5,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
   </head>
   <body>
-    <div class="page-wrap">
-      <div class="header">
-        <h1>Octo-Port</h1>
-        <h2>Making GitHub Issues spreadsheet-friendly</h2>
-      </div>
-      <div class="main" role="main">
-        {% block content %}{% endblock %}
+    <div class="page-outer">
+      <div class="page-wrap">
+        <div class="header">
+          <h1>Octo-Port</h1>
+          <h2>Making GitHub Issues spreadsheet-friendly</h2>
+        </div>
+        <div class="main" role="main">
+          {% block content %}{% endblock %}
+        </div>
       </div>
     </div>
     <div class="footer">
