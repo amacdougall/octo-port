@@ -1,4 +1,8 @@
 {% extends "layout.jinja2" %}
 {% block content %}
-  <p>This is the home page.</p>
+  {% if session.get("authenticated") %}
+    <p>This is the home page.</p>
+  {% else %}
+    <p>Log in</p>
+  {% endif %}
 {% endblock %}

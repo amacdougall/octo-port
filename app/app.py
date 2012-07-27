@@ -4,9 +4,15 @@ Top-level doc comment.
 import os
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
+import yaml
+
+# load constants from external file for ultra-secret security
+constants = yaml.load(open("settings.yaml"))
 
 # CONSTANTS
 DEBUG = True
+GITHUB_CLIENT_ID = constants["GITHUB_CLIENT_ID"]
+GITHUB_CLIENT_SECRET = constants["GITHUB_CLIENT_SECRET"]
 
 
 # APP CONFIG
