@@ -19,15 +19,13 @@ app.config.from_object(__name__)
 
 # ROUTES
 @app.route("/")
-def home():
-    params = {
-        'client_id': GITHUB_CLIENT_ID,
-    }
-    return redirect('https://github.com/login/oauth/authorize?' +
-                    url_encode(params))
+def root():
+    params = {"client_id": GITHUB_CLIENT_ID}
+    auth_url = "https://github.com/login/oauth/authorize?{params}"
+    return redirect(auth_url.format(params=url_encode(params)))
 
-@app.route("/auth/<service>/callback", methods=["GET", "POST"])
-def callback(service):
+@app.route("/home")
+def home():
     return render_template("home.jinja2")
 
 # UTILITY
