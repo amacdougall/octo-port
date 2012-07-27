@@ -28,6 +28,12 @@ def root():
 def home():
     return render_template("home.jinja2")
 
+@app.route("/gimme-csv", methods=['POST', 'GET'])
+def build():
+    if request.method == 'POST':
+        return request.form['github-string']
+    return 'hello you'
+
 # UTILITY
 
 
