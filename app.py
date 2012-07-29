@@ -17,6 +17,7 @@ import pdb
 DEBUG = True
 GITHUB_CLIENT_ID = os.environ["GITHUB_CLIENT_ID"]
 GITHUB_CLIENT_SECRET = os.environ["GITHUB_CLIENT_SECRET"]
+REQUESTED_SCOPES = ["user", "repo"]
 # Field names used in CSV output rows
 FIELDNAMES = [
     "created_at",    # created_at [formatted?]
@@ -52,7 +53,10 @@ app.config.from_object(__name__)
 @app.route("/")
 def root():
     if not session.has_key("token") and not request.args.get("code"):
-        params = {"client_id": GITHUB_CLIENT_ID}
+        params = {
+            "client_id": GITHUB_CLIENT_ID,
+            "scope": ",".join(REQUESTED_SCOPES)
+        }
         auth_url = "https://github.com/login/oauth/authorize?{params}"
         return redirect(auth_url.format(params=url_encode(params)))
     
@@ -106,7 +110,7 @@ def build():
     issue_path = "/repos/{username}/{repository}/issues"
     response = api_request(issue_path.format(username=username, repository=repository),
                            params)
-    issues = json.loads(response.text)
+    issues = json.loads(response.content)
 
     return send_file(build_csv(issues),
                      attachment_filename="issues.csv",
