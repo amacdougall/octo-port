@@ -126,8 +126,13 @@ def build_csv(issues):
 
     output_file = StringIO.StringIO()
     csv_writer = csv.DictWriter(output_file, FIELDNAMES)
+
+    # build header row: the dict(zip(x, x)) yields {"heading": "heading", ...}
+    csv_writer.writerow(dict(zip(FIELDNAMES, FIELDNAMES)))
+
     for issue in issues:
         csv_writer.writerow(issue_to_row(issue))
+
     output_file.seek(0)
     return output_file
 
