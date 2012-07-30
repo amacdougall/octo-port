@@ -6,6 +6,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from werkzeug.urls import url_decode, url_encode
 
 import os
+import re
 import StringIO
 import requests
 import json
@@ -112,6 +113,22 @@ def build():
                            params)
     issues = json.loads(response.content)
 
+    def next_page_url(response):
+        "Get the URL of the next result page from the API response."
+
+        next_pattern = r'<([^>]+)>; rel="next"'
+        link_header = response.headers["link"]
+
+        if not link_header:
+            return False
+
+        match = re.search(next_pattern, link_header)
+        return match and match.group(1)
+
+    while next_page_url(response) is not None:
+        response = api_request(next_page_url(response))
+        issues.extend(json.loads(response.content))
+
     return send_file(build_csv(issues),
                      attachment_filename="issues.csv",
                      as_attachment=True)
@@ -128,7 +145,7 @@ def build_csv(issues):
     csv_writer = csv.DictWriter(output_file, FIELDNAMES)
 
     # build header row: the dict(zip(x, x)) yields {"heading": "heading", ...}
-    csv_writer.writerow(dict(zip(FIELDNAMES, FIELDNAMES)))
+    csv_writer.writerow(dict(zip(FIELDNAMES, [name.encode("utf-8") for name in FIELDNAMES])))
 
     for issue in issues:
         csv_writer.writerow(issue_to_row(issue))
@@ -170,9 +187,6 @@ def issue_to_row(issue):
 
 
 def api_request(path, params=None):
-    print "api_request: current session is"
-    print session
-    print "session['token'] is " + session["token"]
     params = params or {}
     params["access_token"] = session["token"]
 
