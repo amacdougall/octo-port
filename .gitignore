@@ -2,3 +2,6 @@
 venv
 *.pyc
 settings.yaml
+
+# vim swap files:
+*.sw[a-p]

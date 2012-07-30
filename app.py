@@ -1,20 +1,23 @@
 """
 Top-level doc comment.
 """
-import os
-import StringIO
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, send_file
 from werkzeug.urls import url_decode, url_encode
+
+import os
+import StringIO
 import requests
 import json
 import csv
 import urlparse
-import yaml
+import pdb
 
 # CONSTANTS
 DEBUG = True
 GITHUB_CLIENT_ID = os.environ["GITHUB_CLIENT_ID"]
+GITHUB_CLIENT_SECRET = os.environ["GITHUB_CLIENT_SECRET"]
+REQUESTED_SCOPES = ["user", "repo"]
 # Field names used in CSV output rows
 FIELDNAMES = [
     "created_at",    # created_at [formatted?]
@@ -50,12 +53,24 @@ app.config.from_object(__name__)
 @app.route("/")
 def root():
     if not session.has_key("token") and not request.args.get("code"):
-        params = {"client_id": GITHUB_CLIENT_ID}
+        params = {
+            "client_id": GITHUB_CLIENT_ID,
+            "scope": ",".join(REQUESTED_SCOPES)
+        }
         auth_url = "https://github.com/login/oauth/authorize?{params}"
         return redirect(auth_url.format(params=url_encode(params)))
     
     if request.args.get("code"):
-        session["token"] = request.args.get("code")
+        # post the code back to Github to request an access token
+        params = {
+            "client_id": GITHUB_CLIENT_ID,
+            "client_secret": GITHUB_CLIENT_SECRET,
+            "code": request.args.get("code")
+        }
+        auth_url = "https://github.com/login/oauth/access_token"
+        response = requests.post(auth_url, params=params)
+        response_body = urlparse.parse_qs(response.content)
+        session["token"] = response_body["access_token"][0]
 
     return render_template("home.jinja2")
 
@@ -95,7 +110,7 @@ def build():
     issue_path = "/repos/{username}/{repository}/issues"
     response = api_request(issue_path.format(username=username, repository=repository),
                            params)
-    issues = json.loads(response.text)
+    issues = json.loads(response.content)
 
     return send_file(build_csv(issues),
                      attachment_filename="issues.csv",
@@ -159,8 +174,8 @@ def api_request(path, params=None):
     if not params.has_key("per_page"):
         params["per_page"] = RESULTS_PER_PAGE
 
+    # TODO: show error page if response is 404
     return requests.get(urlparse.urljoin(API_ROOT, path),
-                        # TODO: send session["token"] in URL
                         params=params)
 
 # USE AWFUL BUT STANDARD-ISSUE PYTHON HACK TO RUN THE SCRIPT
